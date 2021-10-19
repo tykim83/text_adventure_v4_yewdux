@@ -2,8 +2,11 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 use yewdux::dispatch::DispatchProps;
 
-mod state;
-use crate::state::{Map, Action};
+mod game;
+use crate::game::state::State;
+
+mod components;
+use crate::components::compass::MyCompass;
 
 struct App;
 
@@ -20,50 +23,18 @@ impl Component for App {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let current_room = &ctx.props().state().current_room;
+        let current_location = &ctx.props().state().current_location;
+        let current_room = ctx.props().state().map.get_current_room(current_location);
         html! {
             <>
-            <h1>{ current_room }</h1>
+            <h1>{ &current_room.name }</h1>
             <MyCompass />
             </>
         }
     }
 }
 
-struct Compass;
-
-type MyCompass = WithDispatch<Compass>;
-
-impl Component for Compass {
-    type Message = ();
-    type Properties = DispatchProps<ReducerStore<Map>>; 
-
-    fn create(_ctx: &Context<Self>) -> Self {
-        Self
-    }
-
-    fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
-        false
-    }
-
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        let rooms = &ctx.props().state().rooms;
-
-        html! {
-            <>
-                {
-                for rooms.iter().enumerate().map(|(index, room)| {
-                    html_nested! {
-                        <button onclick={ctx.props().callback(move |_| Action::GoTo(index))}>{ room }</button>
-
-                    }})
-                }
-            </>
-        }
-    }
-}
-
-type AppDispatch = DispatchProps<ReducerStore<Map>>;
+type AppDispatch = DispatchProps<ReducerStore<State>>;
 
 fn main() {
     yew::start_app::<WithDispatch<App>>();
