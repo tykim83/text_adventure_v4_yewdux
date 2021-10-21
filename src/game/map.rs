@@ -29,10 +29,6 @@ impl Map {
             }
         }
     }
-
-    pub fn get_current_room(&self, location: &Location) -> Room {
-        self.rooms[location].clone()
-    }
 }
 
 #[derive(Debug, Clone)]
@@ -40,12 +36,6 @@ pub struct Room {
     pub name: String,
     pub description: String,
     pub exit: HashMap<Direction, Location>,
-}
-
-impl Room {
-    pub fn _get_direction(&self, dir: &Direction) -> Option<Location> {
-        self.exit.get(dir).copied()
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -58,6 +48,6 @@ pub enum Location {
 pub enum Direction {
     North,
     South,
-    _East,
-    _West,
+    East,
+    West,
 }

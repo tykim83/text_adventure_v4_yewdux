@@ -2,7 +2,8 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 use yewdux::dispatch::DispatchProps;
 
-use crate::game::state::State;
+use crate::game::map::Direction;
+use crate::game::state::{State, Action};
 
 pub struct Compass;
 
@@ -17,22 +18,51 @@ impl Component for Compass {
     }
 
     fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
-        false
+        true
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let map = &ctx.props().state().map;
+        let state = ctx.props().state();
+        let current_room = state.get_current_room();
 
         html! {
-            <>
-                {
-                for map.rooms.iter().map(|(_location, room)| {
-                    html_nested! {
-                        <div>{ &room.name }</div>
-                        // <button onclick={ctx.props().callback(move |_| Action::GoTo(index))}>{ room. }</button>
-                    }})
-                }
-            </>
+            <div class="container">
+                <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                        <button class="btn btn-outline-primary compass-button"
+                            onclick={ctx.props().callback(|_| Action::GoTo(Direction::North))}
+                            disabled={current_room.exit.get(&Direction::North).is_none()}> { "North" } 
+                        </button>
+                    </div>
+                    <div class="col-4"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <button class="btn btn-outline-primary compass-button"
+                            onclick={ctx.props().callback(|_| Action::GoTo(Direction::West))} 
+                            disabled={current_room.exit.get(&Direction::West).is_none()}> { "West" }
+                        </button>
+                    </div>
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                        <button class="btn btn-outline-primary compass-button"
+                            onclick={ctx.props().callback(|_| Action::GoTo(Direction::East))} 
+                            disabled={current_room.exit.get(&Direction::East).is_none()}> { "East" } 
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                        <button class="btn btn-outline-primary compass-button"
+                            onclick={ctx.props().callback(|_| Action::GoTo(Direction::South))} 
+                            disabled={current_room.exit.get(&Direction::South).is_none()}> { "South" } 
+                        </button>
+                    </div>
+                    <div class="col-4"></div>
+                </div>
+            </div>
         }
     }
 }

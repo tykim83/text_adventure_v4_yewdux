@@ -1,9 +1,9 @@
 use yewdux::prelude::*;
 
-use super::map::{Location, Map};
+use super::map::{Direction, Location, Map, Room};
 
 pub enum Action {
-    // GoTo(usize),
+    GoTo(Direction),
 }
 
 #[derive(Clone)]
@@ -12,11 +12,17 @@ pub struct State {
     pub current_location: Location,
 }
 
-impl Default for State {
-    fn default() -> Self {
-        Self::new()
+impl State {
+    pub fn get_current_room(&self) -> &Room {
+        self.map.rooms.get(&self.current_location).expect("Something went wrong. It should always get a room.")
     }
 }
+
+// impl Default for State {
+//     fn default() -> Self {
+//         Self::new()
+//     }
+// }
 
 impl Reducer for State {
     type Action = Action;
@@ -28,13 +34,13 @@ impl Reducer for State {
         }
     }
 
-    fn reduce(&mut self, _action: Self::Action) -> Changed {
-        // match action {
-        //     Action::GoTo(room) => {
-        //         self.current_room = self.rooms[room].to_string();
-        //         true
-        //     }
-        // }
-        true
+    fn reduce(&mut self, action: Self::Action) -> Changed {
+        match action {
+            Action::GoTo(direction) => {
+                let room = self.get_current_room();
+                self.current_location = *room.exit.get(&direction).unwrap();
+                true
+            }
+        }
     }
 }

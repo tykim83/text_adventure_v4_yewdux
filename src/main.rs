@@ -19,17 +19,23 @@ impl Component for App {
     }
 
     fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
-        false
+        true
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let current_location = &ctx.props().state().current_location;
-        let current_room = ctx.props().state().map.get_current_room(current_location);
+        let state = ctx.props().state();
+        let current_room = state.get_current_room();
         html! {
-            <>
-            <h1>{ &current_room.name }</h1>
-            <MyCompass />
-            </>
+            <div class="container-fluid p-5">
+                <div class="row">
+                    <div class="col-8">
+                        <h1>{ &current_room.name }</h1>
+                    </div>
+                    <div class="col-4">
+                        <MyCompass />
+                    </div>
+                </div>
+            </div>
         }
     }
 }
