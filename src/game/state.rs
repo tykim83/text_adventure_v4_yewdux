@@ -1,12 +1,12 @@
 use yewdux::prelude::*;
-
+use gloo_console as console;
 use super::map::{Direction, Location, Map, Room};
 
 pub enum Action {
     GoTo(Direction),
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct State {
     pub map: Map,
     pub current_location: Location,
@@ -18,11 +18,11 @@ impl State {
     }
 }
 
-// impl Default for State {
-//     fn default() -> Self {
-//         Self::new()
-//     }
-// }
+impl Default for State {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl Reducer for State {
     type Action = Action;
@@ -37,8 +37,13 @@ impl Reducer for State {
     fn reduce(&mut self, action: Self::Action) -> Changed {
         match action {
             Action::GoTo(direction) => {
+                console::log!(format!("direction: {:?}", direction));
                 let room = self.get_current_room();
-                self.current_location = *room.exit.get(&direction).unwrap();
+                console::log!(format!("room: {:?}", room));
+                let location = *room.exit.get(&direction).unwrap();
+                console::log!(format!("location: {:?}", location));
+                self.current_location = location;
+                console::log!(format!("current_location: {:?}", self.current_location));
                 true
             }
         }

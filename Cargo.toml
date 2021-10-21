@@ -10,3 +10,4 @@ yew = { git = "https://github.com/yewstack/yew" }
 gloo-console = "0.1"
 maplit = "1.0.2"
 yewdux = { git = "https://github.com/intendednull/yewdux.git" }
+wasm-logger = "0.2.0"

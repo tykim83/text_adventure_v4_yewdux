@@ -1,6 +1,7 @@
 use yew::prelude::*;
 use yewdux::prelude::*;
 use yewdux::dispatch::DispatchProps;
+use gloo_console as console;
 
 mod game;
 use crate::game::state::State;
@@ -9,6 +10,8 @@ mod components;
 use crate::components::compass::MyCompass;
 
 struct App;
+
+pub type AppDispatch = DispatchProps<BasicStore<State>>;
 
 impl Component for App {
     type Message = ();
@@ -19,12 +22,13 @@ impl Component for App {
     }
 
     fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
-        true
+        false
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let state = ctx.props().state();
         let current_room = state.get_current_room();
+        console::log!(format!("main: {:?}", state.current_location));
         html! {
             <div class="container-fluid p-5">
                 <div class="row">
@@ -39,8 +43,6 @@ impl Component for App {
         }
     }
 }
-
-type AppDispatch = DispatchProps<ReducerStore<State>>;
 
 fn main() {
     yew::start_app::<WithDispatch<App>>();

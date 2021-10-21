@@ -1,6 +1,7 @@
 use yew::prelude::*;
 use yewdux::prelude::*;
 use yewdux::dispatch::DispatchProps;
+use gloo_console as console;
 
 use crate::game::map::Direction;
 use crate::game::state::{State, Action};
@@ -18,12 +19,14 @@ impl Component for Compass {
     }
 
     fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
-        true
+        false
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let state = ctx.props().state();
         let current_room = state.get_current_room();
+
+        console::log!(format!("compass: {:?}", state.current_location));
 
         html! {
             <div class="container">

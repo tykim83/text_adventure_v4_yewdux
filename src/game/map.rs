@@ -1,5 +1,5 @@
 use maplit::hashmap;
-use std::collections::HashMap;
+use std::{collections::HashMap};
 
 #[derive(Debug, Clone)]
 pub struct Map {
