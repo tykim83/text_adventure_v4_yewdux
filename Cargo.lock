@@ -428,7 +428,7 @@ dependencies = [
 [[package]]
 name = "yew-agent"
 version = "0.1.0"
-source = "git+https://github.com/yewstack/yew#98821c4018b524e439bdf9b05e2f8372e37ef1bd"
+source = "git+https://github.com/yewstack/yew.git#98821c4018b524e439bdf9b05e2f8372e37ef1bd"
 dependencies = [
  "anymap2",
  "bincode",
