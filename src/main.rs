@@ -8,6 +8,7 @@ use crate::game::state::State;
 
 mod components;
 use crate::components::compass::Compass;
+use crate::components::items::ItemsComponent;
 
 struct App {
     state: Rc<State>,
@@ -46,9 +47,11 @@ impl Component for App {
                 <div class="row">
                     <div class="col-8">
                         <h1>{ &current_room.name }</h1>
+                        <p>{ &current_room.description }</p>
                     </div>
                     <div class="col-4">
                         <Compass />
+                        <ItemsComponent />
                     </div>
                 </div>
             </div>
