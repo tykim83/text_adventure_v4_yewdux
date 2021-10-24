@@ -3,17 +3,16 @@ use yewdux::prelude::*;
 use gloo_console as console;
 use std::rc::Rc;
 
-use crate::game::{item::Item, state::State};
+use crate::game::{item::{ButtonType, Item, ItemType}, state::State};
 
 pub struct ItemsComponent {
     state: Rc<State>,
-    _dispatch: Dispatch<BasicStore<State>>,
-    selected_item: Option<Item>
+    dispatch: Dispatch<BasicStore<State>>,
 }
 
 impl ItemsComponent {
     fn hide_buttons(&self) -> &'static str {
-        if self.selected_item.is_none() {
+        if self.state.selected_item.is_none() {
             return "d-none"
         }
         "d-flex"
@@ -22,7 +21,8 @@ impl ItemsComponent {
 
 pub enum Msg {
     State(Rc<State>),
-    SetActive(Item),
+    SetActive(ItemType),
+    ItemAction(ButtonType),
 }
 
 impl Component for ItemsComponent {
@@ -31,9 +31,8 @@ impl Component for ItemsComponent {
 
     fn create(ctx: &Context<Self>) -> Self {
         Self {
-            _dispatch: Dispatch::bridge_state(ctx.link().callback(Msg::State)),
+            dispatch: Dispatch::bridge_state(ctx.link().callback(Msg::State)),
             state: Default::default(),
-            selected_item: None,
         }
     }
 
@@ -41,19 +40,22 @@ impl Component for ItemsComponent {
         match msg {
             Msg::State(state) => {
                 self.state = state;
-                self.selected_item = None;
                 true
             },
             Msg::SetActive(item) => {
-                self.selected_item = Some(item);
+                self.dispatch.reduce(move |s| s.selected_item = Some(item));
                 true
+            },
+            Msg::ItemAction(button_type) => {
+                self.dispatch.reduce(move |s| s.action_item(button_type));
+                false
             },
         }
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
   
-        let items = self.state.get_current_room_items();
+        let item_types = self.state.get_current_room_items();
         // console::log!(format!("compass: {:?}", items));
 
         html! {
@@ -67,12 +69,11 @@ impl Component for ItemsComponent {
                     <div class="card-body">
                         
                     {
-                        for items.into_iter().map(|item| {
-                            
+                        for item_types.into_iter().map(|item_type| {
                             html! {
                                 <input 
-                                    value={item.name.clone()} 
-                                    onclick={ctx.link().callback(move |_| Msg::SetActive(item.clone()))} 
+                                    value={ self.state.get_item_name(item_type).to_owned() } 
+                                    onclick={ctx.link().callback(move |_| Msg::SetActive(item_type))} 
                                     class="btn btn-outline-secondary m-2" type="button" />
                             }
                         }) 
@@ -83,8 +84,16 @@ impl Component for ItemsComponent {
 
                     <div class="card-footer text-muted">
                         <div class={classes!(self.hide_buttons())}>
-                            <button onclick={|_| console::log!("click")} class="btn btn-primary">{ "Look At" }</button>
-                            <button onclick={|_| console::log!("click")} class="btn btn-primary">{ "Take" }</button>
+                            <input 
+                                value={ "Look At" }
+                                onclick={ctx.link().callback(|_| Msg::ItemAction(ButtonType::Look))}  
+                                class="btn btn-primary m-2"
+                                type="button" />
+                            <input 
+                                value={ "Take" }
+                                onclick={ctx.link().callback(|_| Msg::ItemAction(ButtonType::Take))}  
+                                class="btn btn-primary m-2" 
+                                type="button" />
                         </div>
                     </div>
 
