@@ -21,7 +21,7 @@ impl Map {
                     Room {
                         name: String::from("Kitchen"),
                         description: String::from(
-                            "There is a table with a key on it. A door leading north.",
+                            "It's really messy, dishes are still dirty and there old boxes of pizza on the floor.",
                         ),
                         exit: hashmap! { Direction::North => Location::GameRoom },
                     }

@@ -3,7 +3,7 @@ use yewdux::prelude::*;
 use gloo_console as console;
 use std::rc::Rc;
 
-use crate::game::{item::{ButtonType, Item, ItemType}, state::State};
+use crate::game::{item::{ButtonType, ItemType}, state::State};
 
 pub struct ItemsComponent {
     state: Rc<State>,

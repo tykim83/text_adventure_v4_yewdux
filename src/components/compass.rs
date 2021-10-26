@@ -37,6 +37,7 @@ impl Component for Compass {
                 let location = self.state.go_to_direction(&direction);
                 self.dispatch.reduce(move |s| s.current_location = location);
                 self.dispatch.reduce(move |s| s.selected_item = None);
+                self.dispatch.reduce(move |s| s.log = vec![]);
                 true
             },
         }
