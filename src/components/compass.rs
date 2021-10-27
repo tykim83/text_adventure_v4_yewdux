@@ -44,7 +44,6 @@ impl Component for Compass {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-  
         let current_room = self.state.get_current_room();
         // console::log!(format!("compass: {:?}", current_room));
 
