@@ -7,7 +7,7 @@ pub struct State {
     pub map: Map,
     pub objects: ItemList,
     pub current_location: Location,
-    pub selected_item: Option<ItemType>,
+    pub selected_item: Option<ComponentType>,
     pub log: Vec<String>,
 }
 
@@ -34,6 +34,12 @@ impl State {
         }).map(|(k,_)| k).copied().collect()
     }
 
+    pub fn get_inventory_items(&self) -> Vec<ItemType> {
+        self.objects.item_list.iter().filter(|(_,v)| {
+            matches!(v.location, Some(ItemLocation::Inventory))
+        }).map(|(k,_)| k).copied().collect()
+    }
+
     pub fn go_to_direction(&self, direction: &Direction) -> Location {
         let room = self.get_current_room();
         room.exit.get(direction).expect("Something went wrong. It should always get a location.").to_owned()
@@ -43,26 +49,42 @@ impl State {
         match button_type {
             ButtonType::Look => self.look_item(),
             ButtonType::Take => self.take_item(),
+            ButtonType::Use => (),
         }
         self.selected_item = None;   
     }
 
     fn take_item(&mut self) {   
-        let item = self.objects.item_list.get_mut(&self.selected_item.expect("An item should always be selected")).expect("This should always ");
+        // Refactor this
+        let comp = &self.selected_item.expect("This should always ");
+        let item = match comp {
+            ComponentType::_Compass(item) => item,
+            ComponentType::Items(item) => item,
+            ComponentType::Inventory(item) => item,
+        };
+        let item = self.objects.item_list.get_mut(item).expect("This should always ");
         self.log.push(item.pick_up.log.to_owned());
 
+        // Pick up item
         if item.pick_up.can_be_pick_up {
             item.location = Some(ItemLocation::Inventory);
         }
 
+        // Modify room text
         if let Some((item, index)) = item.pick_up.item_description_to_be_changed {
             let item = self.objects.item_list.get_mut(&item).expect("This should always ");
             item.active_room_description = Some(index);
         }
     }
 
-    fn look_item(&mut self) {   
-        let item = &self.objects.item_list.get(&self.selected_item.expect("An item should always be selected")).expect("This should always ").description;
+    fn look_item(&mut self) {  
+        let comp = &self.selected_item.expect("An item should always be selected"); 
+        let item = match comp {
+            ComponentType::_Compass(item) => item,
+            ComponentType::Items(item) => item,
+            ComponentType::Inventory(item) => item,
+        };
+        let item = &self.objects.item_list.get(item).expect("This should always ").description;
         self.log.push(item.to_string());
     }
 }
@@ -77,4 +99,11 @@ impl Default for State {
             log: vec![],
         }
     }
+}
+
+#[derive(Clone, Debug, Copy, PartialEq, Eq)]
+pub enum ComponentType {
+    _Compass(ItemType),
+    Items(ItemType),
+    Inventory(ItemType),
 }

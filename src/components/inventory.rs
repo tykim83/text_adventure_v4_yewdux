@@ -5,14 +5,14 @@ use std::rc::Rc;
 
 use crate::game::{item::{ButtonType, ItemType}, state::{ComponentType, State}};
 
-pub struct ItemsComponent {
+pub struct InventoryComponent {
     state: Rc<State>,
     dispatch: Dispatch<BasicStore<State>>,
 }
 
-impl ItemsComponent {
+impl InventoryComponent {
     fn hide_buttons(&self) -> &'static str {
-        if let Some(ComponentType::Items(_)) = self.state.selected_item {
+        if let Some(ComponentType::Inventory(_)) = self.state.selected_item {
             return "d-flex"
         }
         "d-none"
@@ -25,7 +25,7 @@ pub enum Msg {
     ItemAction(ButtonType),
 }
 
-impl Component for ItemsComponent {
+impl Component for InventoryComponent {
     type Message = Msg;
     type Properties = ();
 
@@ -43,7 +43,7 @@ impl Component for ItemsComponent {
                 true
             },
             Msg::SetActive(item) => {
-                self.dispatch.reduce(move |s| s.selected_item = Some(ComponentType::Items(item)));
+                self.dispatch.reduce(move |s| s.selected_item = Some(ComponentType::Inventory(item)));
                 true
             },
             Msg::ItemAction(button_type) => {
@@ -54,15 +54,14 @@ impl Component for ItemsComponent {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let item_types = self.state.get_current_room_items();
-        // console::log!(format!("compass: {:?}", items));
+        let item_types = self.state.get_inventory_items();      
 
         html! {
-            <div class="container  mb-3">
+            <div class="container">
                 <div class="card">
 
                     <div class="card-header text-info">
-                        { "Items" }
+                        { "Inventory" }
                     </div>
 
                     <div class="card-body">
@@ -77,7 +76,7 @@ impl Component for ItemsComponent {
                             }
                         }) 
                     }
-                     
+                       
                     </div>
 
                     <div class="card-footer text-muted">
@@ -88,8 +87,8 @@ impl Component for ItemsComponent {
                                 class="btn btn-primary m-2"
                                 type="button" />
                             <input 
-                                value={ "Take" }
-                                onclick={ctx.link().callback(|_| Msg::ItemAction(ButtonType::Take))}  
+                                value={ "Use" }
+                                onclick={ctx.link().callback(|_| Msg::ItemAction(ButtonType::Use))}  
                                 class="btn btn-primary m-2" 
                                 type="button" />
                         </div>

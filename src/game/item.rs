@@ -113,4 +113,5 @@ pub enum ItemLocation {
 pub enum ButtonType {
     Look,
     Take,
+    Use,
 }

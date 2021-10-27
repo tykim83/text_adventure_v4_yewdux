@@ -9,6 +9,7 @@ use crate::game::state::State;
 mod components;
 use crate::components::compass::Compass;
 use crate::components::items::ItemsComponent;
+use crate::components::inventory::InventoryComponent;
 
 const HTML_SPACE: &str = "\u{00a0}";
 
@@ -80,6 +81,7 @@ impl Component for App {
                     <div class="col-4">
                         <Compass />
                         <ItemsComponent />
+                        <InventoryComponent />
                     </div>
 
                 </div>
