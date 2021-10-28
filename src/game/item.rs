@@ -73,7 +73,7 @@ impl ItemList {
                         }
                     }
                 },
-            }                      
+            },
         }
     }
 }
@@ -114,4 +114,10 @@ pub enum ButtonType {
     Look,
     Take,
     Use,
+}
+
+#[derive(Clone, Debug, Copy, PartialEq, Eq)]
+pub enum ComponentType {
+    Items(ItemType),
+    Inventory(ItemType),
 }

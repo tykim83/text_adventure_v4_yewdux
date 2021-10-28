@@ -9,12 +9,16 @@ pub struct Map {
 impl Map {
     pub fn new() -> Self {
         Self {
-            rooms: hashmap!{
+            rooms: hashmap! {
                 Location::GameRoom => {
                     Room {
                         name: String::from("Game room"),
                         description: String::from("There is a computer"),
-                        exit: hashmap! { Direction::South => Location::Kitchen },
+                        exit: hashmap! { Direction::South => Door {
+                                location: Location::Kitchen,
+                                is_locked: false,
+                            }
+                        },
                     }
                 },
                 Location::Kitchen => {
@@ -23,10 +27,14 @@ impl Map {
                         description: String::from(
                             "It's really messy, dishes are still dirty and there old boxes of pizza on the floor.",
                         ),
-                        exit: hashmap! { Direction::North => Location::GameRoom },
+                        exit: hashmap! { Direction::North => Door {
+                                location: Location::GameRoom,
+                                is_locked: true,
+                            }
+                        },
                     }
                 },
-            }
+            },
         }
     }
 }
@@ -41,7 +49,13 @@ impl Default for Map {
 pub struct Room {
     pub name: String,
     pub description: String,
-    pub exit: HashMap<Direction, Location>,
+    pub exit: HashMap<Direction, Door>,
+}
+
+#[derive(Debug, Clone)]
+pub struct Door {
+    pub location: Location,
+    pub is_locked: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

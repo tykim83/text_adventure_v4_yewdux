@@ -1,10 +1,10 @@
-use yew::prelude::*;
-use yewdux::prelude::*;
 use gloo_console as console;
 use std::rc::Rc;
+use yew::prelude::*;
+use yewdux::prelude::*;
 
 use crate::game::map::Direction;
-use crate::game::state::{State};
+use crate::game::state::State;
 
 pub struct Compass {
     state: Rc<State>,
@@ -32,14 +32,17 @@ impl Component for Compass {
             Msg::State(state) => {
                 self.state = state;
                 true
-            },
+            }
             Msg::GoTo(direction) => {
-                let location = self.state.go_to_direction(&direction);
-                self.dispatch.reduce(move |s| s.current_location = location);
-                self.dispatch.reduce(move |s| s.selected_item = None);
-                self.dispatch.reduce(move |s| s.log = vec![]);
+                if let Some(location) = self.state.go_to_direction(&direction) {
+                    self.dispatch.reduce(move |s| s.current_location = location);
+                    self.dispatch.reduce(move |s| s.selected_item = None);
+                    self.dispatch.reduce(move |s| s.log = vec![]);
+                } else {
+                    self.dispatch.reduce(move |s| s.log.push("It's locked".to_string()));
+                }
                 true
-            },
+            }
         }
     }
 
@@ -59,7 +62,7 @@ impl Component for Compass {
                             <div class="col-4">
                                 <button class="btn btn-primary compass-button"
                                     onclick={ctx.link().callback(|_| Msg::GoTo(Direction::North))}
-                                    disabled={current_room.exit.get(&Direction::North).is_none()}> { "North" } 
+                                    disabled={current_room.exit.get(&Direction::North).is_none()}> { "North" }
                                 </button>
                             </div>
                             <div class="col-4"></div>
@@ -67,15 +70,15 @@ impl Component for Compass {
                         <div class="row">
                             <div class="col-4">
                                 <button class="btn btn-primary compass-button"
-                                    onclick={ctx.link().callback(|_| Msg::GoTo(Direction::West))} 
+                                    onclick={ctx.link().callback(|_| Msg::GoTo(Direction::West))}
                                     disabled={current_room.exit.get(&Direction::West).is_none()}> { "West" }
                                 </button>
                             </div>
                             <div class="col-4"></div>
                             <div class="col-4">
                                 <button class="btn btn-primary compass-button"
-                                    onclick={ctx.link().callback(|_| Msg::GoTo(Direction::East))} 
-                                    disabled={current_room.exit.get(&Direction::East).is_none()}> { "East" } 
+                                    onclick={ctx.link().callback(|_| Msg::GoTo(Direction::East))}
+                                    disabled={current_room.exit.get(&Direction::East).is_none()}> { "East" }
                                 </button>
                             </div>
                         </div>
@@ -83,15 +86,15 @@ impl Component for Compass {
                             <div class="col-4"></div>
                             <div class="col-4">
                                 <button class="btn btn-primary compass-button"
-                                    onclick={ctx.link().callback(|_| Msg::GoTo(Direction::South))} 
-                                    disabled={current_room.exit.get(&Direction::South).is_none()}> { "South" } 
+                                    onclick={ctx.link().callback(|_| Msg::GoTo(Direction::South))}
+                                    disabled={current_room.exit.get(&Direction::South).is_none()}> { "South" }
                                 </button>
                             </div>
                             <div class="col-4"></div>
                         </div>
 
                     </div>
-                </div> 
+                </div>
             </div>
         }
     }
